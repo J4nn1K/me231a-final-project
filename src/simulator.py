@@ -14,7 +14,7 @@ class Simulator():
     self.l1 = model_parameters.l1
     self.l2 = model_parameters.l2
     self.I1 = model_parameters.I1
-    self.I2 = model_parameters.i2
+    self.I2 = model_parameters.I2
 		
 		self.g = model_parameters.g
 
