@@ -12,3 +12,11 @@ class ModelParameters:
   I2: float
 
   g: float = 9.81
+
+
+@dataclass
+class MPCParameters:
+  N: int
+  dt: float
+  u_lim: float
+  max_iter: int
