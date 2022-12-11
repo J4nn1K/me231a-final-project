@@ -16,7 +16,7 @@ class Simulator():
     self.I1 = model_parameters.I1
     self.I2 = model_parameters.I2
 		
-		self.g = model_parameters.g
+    self.g = model_parameters.g
 
   def simulate(self, x, u):
     self.u = u
