@@ -1,4 +1,5 @@
 from scipy.integrate import solve_ivp
+import numpy as np
 # from model_parameters import ModelParameters
 
 
@@ -18,7 +19,7 @@ class Simulator():
 		
     self.g = model_parameters.g
 
-  def simulate(self, x, u):
+  def simulate_step(self, x, u=0):
     self.u = u
 
     t_eval = np.arange(0, self.dt, self.dt/10)
