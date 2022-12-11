@@ -10,8 +10,9 @@ class Plotter():
   def __init__(self):
     pass
 
-  def animate_pendulum(phi1, phi2, L1, L2, dt = 0.05, animStep = 25):
+  def animate_pendulum(phi1, phi2, L1, L2, dt):
   # animStep: delay between each frame of the animation in milliseconds
+    animStep = dt*1000
 
     rc('animation', html='jshtml')
 
