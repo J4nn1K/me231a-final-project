@@ -5,3 +5,10 @@ Install Python packages from the root directory:
 ```
 pip install -r requirements.txt
 ```
+Install IPOPT:
+```
+apt-get install -y -qq glpk-utils
+wget -N -q "https://portal.ampl.com/dl/open/ipopt/ipopt-linux64.zip"
+unzip -o -q ipopt-linux64
+apt-get install -y -qq coinor-cbc
+```
