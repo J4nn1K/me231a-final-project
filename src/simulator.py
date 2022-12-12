@@ -1,6 +1,5 @@
 from scipy.integrate import solve_ivp
 import numpy as np
-# from model_parameters import ModelParameters
 
 
 class Simulator():
@@ -29,6 +28,14 @@ class Simulator():
     solution = solve_ivp(self._func, [0, self.dt], x, method='RK45', t_eval=t_eval)
 
     return solution.y[:, -1]
+
+  def calculate_energies(self, x):
+    E_kin_p1 = 1 / 2 * self.I1 * x[2]**2
+    E_kin_p2 = 1 / 2 * (self.m2*self.L1**2 + self.I2 + 2*self.m2*self.L1*self.l2*np.cos(x[1]))*x[2]**2 + 1/2*self.I2*x[3]**2 + (self.I2 + self.m2*self.L1*self.l2*np.cos(x[1]))*x[2]*x[3]
+    E_kin = E_kin_p1 + E_kin_p2
+    E_pot = self.m1*self.l1*self.g + self.m2*(self.L1+self.l2)*self.g -(self.m1 * self.g * self.l1 * np.cos(x[0]) + self.m2 * self.g * (self.L1 * np.cos(x[0]) + self.l2 * np.cos(x[0]+x[1])))
+
+    return E_kin, E_pot
 
   def _func(self, t, x):
     M_inv = 1/(- self.L1**2*self.l2**2*self.m2**2*np.cos(x[1])**2 + self.I2*self.L1**2*self.m2 + self.I1*self.I2)*np.array([[self.I2, -(self.I2 + self.L1*self.l2*self.m2*np.cos(x[1]))],
