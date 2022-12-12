@@ -15,6 +15,8 @@ class MPC():
     self.I1 = model_parameters.I1
     self.I2 = model_parameters.I2
     self.g = model_parameters.g
+    self.f1 = model_parameters.f1
+    self.f2 = model_parameters.f2
 
   def set_controller_params(self, controller_parameters):
     self.N = controller_parameters.N
@@ -47,6 +49,8 @@ class MPC():
     model.l2 = self.l2
     model.I1 = self.I1
     model.I2 = self.I2
+    model.f1 = self.f1
+    model.f2 = self.f2
 
     model.g = self.g
     model.last_t = None
@@ -63,7 +67,7 @@ class MPC():
 
           E_pot += model.m1*model.l1*model.g + model.m2*(model.L1+model.l2)*model.g -(model.m1 * model.g * model.l1 * pyo.cos(model.x[0, t]) + model.m2 * model.g * (model.L1 * pyo.cos(model.x[0, t]) + model.l2 * pyo.cos(model.x[0, t]+model.x[1, t])))
     
-        return E_kin - E_pot #sum(model.u[0,t]**2 for t in model.tIDX)
+        return E_kin - E_pot + 0.0*sum(model.u[0,t]**2 for t in model.tIDX)
 
     model.cost = pyo.Objective(rule = objective_rule, sense=pyo.minimize)
     
@@ -84,19 +88,23 @@ class MPC():
 
             model.tau = np.array([[-model.m1*model.g*model.l1*pyo.sin(model.x[0, t]) - model.m2*model.g*(model.L1*pyo.sin(model.x[0, t])+model.l2*pyo.sin(model.x[0, t]+model.x[1, t]))],
                             [-model.m2*model.g*model.l2*pyo.sin(model.x[0, t]+model.x[1, t])]])
+
+            model.F = np.array([[self.f1, 0],[0, self.f2]])
+
             model.B = np.array([[1.0],[0.0]])
 
             model.MC = np.zeros_like(model.M_inv)
+            model.MF = np.zeros_like(model.M_inv)
             model.Mtau = np.zeros_like(model.tau)
             model.MB = np.zeros_like(model.tau)
             for i2 in range(2):
               for k in range(2):
                 model.MC[i2,k] = sum(model.M_inv[i2,j] * model.C[j,k] for j in range(2))
-                
+                model.MF[i2,k] = sum(model.M_inv[i2,j] * model.F[j,k] for j in range(2))
               model.Mtau[i2,0] = sum(model.M_inv[i2,j] * model.tau[j,0] for j in range(2))
               model.MB[i2,0] = sum(model.M_inv[i2,j] * model.B[j,0] for j in range(2))
 
-          return (model.x[i, t+1] == model.x[i, t] + self.dt*(-sum(model.MC[i-2, j] * model.x[j+2, t] for j in range(2)) + model.Mtau[i-2, 0]
+          return (model.x[i, t+1] == model.x[i, t] + self.dt*(-sum((model.MC[i-2, j]+model.MF[i-2, j]) * model.x[j+2, t] for j in range(2)) + model.Mtau[i-2, 0]
                                  +  model.MB[i-2, 0] * model.u[0, t//x_fac] )) if t < model.N*x_fac else pyo.Constraint.Skip #model.u[0, t]
 
     model.equality_constraints = pyo.Constraint(model.tIDX_x, model.xIDX, rule=equality_const_rule)

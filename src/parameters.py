@@ -10,6 +10,8 @@ class ModelParameters:
   l2: float
   I1: float
   I2: float
+  f1: float
+  f2: float
 
   g: float = 9.81
 

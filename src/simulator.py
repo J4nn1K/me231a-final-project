@@ -16,6 +16,8 @@ class Simulator():
     self.l2 = model_parameters.l2
     self.I1 = model_parameters.I1
     self.I2 = model_parameters.I2
+    self.f1 = model_parameters.f1
+    self.f2 = model_parameters.f2
 		
     self.g = model_parameters.g
 
@@ -38,12 +40,14 @@ class Simulator():
     tau = np.array([[-self.m1*self.g*self.l1*np.sin(x[0]) - self.m2*self.g*(self.L1*np.sin(x[0])+self.l2*np.sin(x[0]+x[1]))],
                     [-self.m2*self.g*self.l2*np.sin(x[0]+x[1])]])
 
+    F = np.array([[self.f1, 0],[0, self.f2]])
+
     B = np.array([[1], [0]])
 
     f = np.zeros_like(x)
     f[0] = x[2]
     f[1] = x[3]
-    f[2:4] = (M_inv @ (-C @ x[2:4].reshape(2,) +
-              tau.reshape(2,) + B.reshape(2,) * self.u)).T
+    f[2:4] = (M_inv @ (-(C+F) @ x[2:4].reshape(2,)
+              + tau.reshape(2,) + B.reshape(2,) * self.u)).T
         
     return f
