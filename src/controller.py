@@ -125,27 +125,31 @@ class LinearReferenceMPC(MPC):
   def objective_rule(self,model):
     return sum((model.x[0,t]-np.pi)**2 + (model.x[1,t]+model.x[0,t]-np.pi)**2 + 0.01*model.u[0,t]**2  for t in model.tIDX if t < model.N) 
 
-  #def equality_const_rule(self,model, t, i):
-  #  if i < 2:
-  #    return model.x[i, t+1] == model.x[i, t] + self.dt/self.x_fac*model.x[i+2, t] if t < model.N else pyo.Constraint.Skip
-  #  else:
-  #    if t != model.last_t:
-  #      model.M_inv = np.array([[-2.0*self.I2/(-2.0*self.I1*self.I2 - 2.0*self.I2*self.L1**2*self.m2 + 2.0*self.L1**2*self.l2**2*self.m2**2), (2.0*self.I2 - 2.0*self.L1*self.l2*self.m2)/(-2.0*self.I1*self.I2 - 2.0*self.I2*self.L1**2*self.m2 + 2.0*self.L1**2*self.l2**2*self.m2**2)], 
-  #                          [(1.0*self.I2 - 1.0*self.L1*self.l2*self.m2)/(-1.0*self.I1*self.I2 - 1.0*self.I2*self.L1**2*self.m2 + 1.0*self.L1**2*self.l2**2*self.m2**2), (-1.0*self.I1 - 1.0*self.I2 - 1.0*self.L1**2*self.m2 + 2.0*self.L1*self.l2*self.m2)/(-1.0*self.I1*self.I2 - 1.0*self.I2*self.L1**2*self.m2 + 1.0*self.L1**2*self.l2**2*self.m2**2)]])
-  #      model.Q = np.array([[1.0*self.g*self.l1*self.m1 - self.g*self.m2*(-1.0*self.L1 - 1.0*self.l2), 1.0*self.g*self.l2*self.m2],
-  #                    [1.0*self.g*self.l2*self.m2, 1.0*self.g*self.l2*self.m2]])
-  #      model.B = np.array([[1],[0]])
-  #      
-  #      model.MQ = np.zeros_like(model.Q)
-  #      model.MB = np.zeros_like(model.B)
-  #      for i2 in range(2):
-  #        for k in range(2):
-  #          model.MQ[i2,k] = sum(model.M_inv[i2,j] * model.Q[j,k] for j in range(2))
-  #        model.MB[i2,0] = sum(model.M_inv[i2,j] * model.B[j,0] for j in range(2))
-  #        coordinate_diff = np.array([np.pi,0])
-  #    
-  #    return (model.x[i, t+1] == model.x[i, t] + self.dt*(sum(-model.MQ[i-2, j] * (model.x[j, t]-coordinate_diff[j]) for j in range(2))
-  #                               +  model.MB[i-2, 0] * model.u[0, t//self.x_fac] )) if t < model.N*self.x_fac else pyo.Constraint.Skip
+  def equality_const_rule(self,model, t, i):
+    if i < 2:
+      return model.x[i, t+1] == model.x[i, t] + self.dt/self.x_fac*model.x[i+2, t] if t < model.N else pyo.Constraint.Skip
+    else:
+      if t != model.last_t:
+        #model.M_inv = np.array([[-self.I2/(-self.I1*self.I2 - self.I2*self.L1**2*self.m2 + 2.0*self.L1**2*self.l2**2*self.m2**2), (2.0*self.I2 - 2.0*self.L1*self.l2*self.m2)/(-2.0*self.I1*self.I2 - 2.0*self.I2*self.L1**2*self.m2 + 2.0*self.L1**2*self.l2**2*self.m2**2)], 
+        #                    [(1.0*self.I2 - 1.0*self.L1*self.l2*self.m2)/(-1.0*self.I1*self.I2 - 1.0*self.I2*self.L1**2*self.m2 + 1.0*self.L1**2*self.l2**2*self.m2**2), (-1.0*self.I1 - 1.0*self.I2 - 1.0*self.L1**2*self.m2 + 2.0*self.L1*self.l2*self.m2)/(-1.0*self.I1*self.I2 - 1.0*self.I2*self.L1**2*self.m2 + 1.0*self.L1**2*self.l2**2*self.m2**2)]])
+        model.M_inv = np.array([[-self.I2/(-self.I1*self.I2 - self.I2*self.L1**2*self.m2 + self.L1**2*self.l2**2*self.m2**2), (self.I2 + self.L1*self.l2*self.m2)/(-self.I1*self.I2 - self.I2*self.L1**2*self.m2 + self.L1**2*self.l2**2*self.m2**2)], 
+                                [(self.I2 + self.L1*self.l2*self.m2)/(-self.I1*self.I2 - self.I2*self.L1**2*self.m2 + self.L1**2*self.l2**2*self.m2**2), (-self.I1 - self.I2 - self.L1**2*self.m2 - 2*self.L1*self.l2*self.m2)/(-self.I1*self.I2 - self.I2*self.L1**2*self.m2 + self.L1**2*self.l2**2*self.m2**2)]])
+
+        
+        model.Q = -np.array([[1.0*self.g*self.l1*self.m1 - self.g*self.m2*(-1.0*self.L1 - 1.0*self.l2), 1.0*self.g*self.l2*self.m2],
+                      [1.0*self.g*self.l2*self.m2, 1.0*self.g*self.l2*self.m2]])
+        model.B = np.array([[1],[0]])
+        
+        model.MQ = np.zeros_like(model.Q)
+        model.MB = np.zeros_like(model.B)
+        for i2 in range(2):
+          for k in range(2):
+            model.MQ[i2,k] = sum(model.M_inv[i2,j] * model.Q[j,k] for j in range(2))
+          model.MB[i2,0] = sum(model.M_inv[i2,j] * model.B[j,0] for j in range(2))
+          coordinate_diff = np.array([np.pi,0])
+      
+      return (model.x[i, t+1] == model.x[i, t] + self.dt*(sum(-model.MQ[i-2, j] * (model.x[j, t]-coordinate_diff[j]) for j in range(2))
+                                 +  model.MB[i-2, 0] * model.u[0, t//self.x_fac] )) if t < model.N*self.x_fac else pyo.Constraint.Skip
 
 class PID():
   def __init__(self, Kp, Ki, Kd):
