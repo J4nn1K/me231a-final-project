@@ -1,7 +1,7 @@
 # Final Project for ME 231A 
 This repository contains the code for our final project of Prof. Francesco Borrelli's course "Experiential Advanced Control Design I" at UC Berkeley.
 
-<img src="results/animation/animation.gif" width="200" height="400" />
+![](https://github.com/J4nn1K/me231a-final-project/blob/master/results/animations/animation.gif)
 
 ## Installation
 Install Python packages from the root directory:
