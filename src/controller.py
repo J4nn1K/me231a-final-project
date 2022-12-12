@@ -1,5 +1,8 @@
 import pyomo.environ as pyo
 import numpy as np
+import logging
+
+logging.getLogger('pyomo.core').setLevel(logging.ERROR)
 
 class MPC():
   def __init__(self):
