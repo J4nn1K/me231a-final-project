@@ -36,7 +36,7 @@ class Plotter():
     # L1, L2: length of the rods
     x1, y1, x2, y2, x2P, y2P, limit = coordinateComp(phi1, phi2, L1, L2)
     
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(6, 6))
     ax = plt.axes(xlim=(-limit, limit), ylim=(-limit, limit))
     line1, = ax.plot([], [], 'o-',color = '#d2eeff',markersize = 16, markerfacecolor = '#0077BE',lw=3, markevery=10000, markeredgecolor = 'k')   # line for Earth
     line2, = ax.plot([], [], 'o-',color = '#ffebd8',markersize = 16, markerfacecolor = '#f66338',lw=3, markevery=10000, markeredgecolor = 'k')   # line for Jupiter
@@ -84,5 +84,6 @@ class Plotter():
 
 
     anim = animation.FuncAnimation(fig, animate, np.arange(0, len(x1)), interval=animStep, blit=True, init_func=init)
+    plt.close() 
     
     return anim
