@@ -26,7 +26,7 @@ class Plotter():
       x2P = x1 + L2/2 * np.sin(np.add(phi1,phi2)) # point mass rod 2
       y2P = y1 - L2/2 * np.cos(np.add(phi1,phi2)) # point mass rod 2
 
-      limit = math.ceil(1.1*(L1 + L2))
+      limit = 1.1*(L1 + L2)
 
       return x1, y1, x2, y2, x2P, y2P, limit
 
@@ -38,16 +38,16 @@ class Plotter():
     
     fig = plt.figure(figsize=(6, 6))
     ax = plt.axes(xlim=(-limit, limit), ylim=(-limit, limit))
-    line1, = ax.plot([], [], 'o-',color = '#d2eeff',markersize = 16, markerfacecolor = '#0077BE',lw=3, markevery=10000, markeredgecolor = 'k')   # line for Earth
-    line2, = ax.plot([], [], 'o-',color = '#ffebd8',markersize = 16, markerfacecolor = '#f66338',lw=3, markevery=10000, markeredgecolor = 'k')   # line for Jupiter
+    line1, = ax.plot([], [], 'o-',color = '#d2eeff',markersize = 16, markerfacecolor = '#0077BE',lw=3, markevery=10000, markeredgecolor = 'k')
+    line2, = ax.plot([], [], 'o-',color = '#ffebd8',markersize = 16, markerfacecolor = '#f66338',lw=3, markevery=10000, markeredgecolor = 'k')
     line3, = ax.plot([], [], color='k', linestyle='-', linewidth=3)
     line4, = ax.plot([], [], color='k', linestyle='-', linewidth=3)
     line5, = ax.plot([], [], 'o', color='k', markersize = 7)
     time_template = 'Time = %.1f s'
     time_string = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 
-    ax.get_xaxis().set_ticks([])    # enable this to hide x axis ticks
-    ax.get_yaxis().set_ticks([])    # enable this to hide y axis ticks
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
 
 
     # initialization function: plot the background of each frame
