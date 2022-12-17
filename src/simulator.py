@@ -17,6 +17,8 @@ class Simulator():
     self.I2 = model_parameters.I2
     self.f1 = model_parameters.f1
     self.f2 = model_parameters.f2
+    self.f1 = model_parameters.f1
+    self.f2 = model_parameters.f2
 		
     self.g = model_parameters.g
 
@@ -25,7 +27,7 @@ class Simulator():
 
     t_eval = np.arange(0, self.dt, self.dt/10)
     
-    solution = solve_ivp(self._func, [0, self.dt], x, method='RK45', t_eval=t_eval)
+    solution = solve_ivp(self._func, [0, self.dt], x, method='BDF', t_eval=t_eval)
 
     return solution.y[:, -1]
 
@@ -49,12 +51,14 @@ class Simulator():
 
     F = np.array([[self.f1, 0],[0, self.f2]])
 
+    F = np.array([[self.f1,0],[0,self.f2]])
+
     B = np.array([[1], [0]])
 
     f = np.zeros_like(x)
     f[0] = x[2]
     f[1] = x[3]
-    f[2:4] = (M_inv @ (-(C+F) @ x[2:4].reshape(2,)
+    f[2:4] = (M_inv @ (-((C+F)+F) @ x[2:4].reshape(2,)
               + tau.reshape(2,) + B.reshape(2,) * self.u)).T
         
     return f
