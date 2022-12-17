@@ -25,7 +25,7 @@ class Simulator():
 
     t_eval = np.arange(0, self.dt, self.dt/10)
     
-    solution = solve_ivp(self._func, [0, self.dt], x, method='BDF', t_eval=t_eval)
+    solution = solve_ivp(self._func, [0, self.dt], x, method='RK45', t_eval=t_eval)
 
     return solution.y[:, -1]
 
