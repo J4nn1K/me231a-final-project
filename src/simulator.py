@@ -17,9 +17,7 @@ class Simulator():
     self.I2 = model_parameters.I2
     self.f1 = model_parameters.f1
     self.f2 = model_parameters.f2
-    self.f1 = model_parameters.f1
-    self.f2 = model_parameters.f2
-		
+
     self.g = model_parameters.g
 
   def simulate_step(self, x, u=0):
